@@ -14,5 +14,5 @@ module.exports = {
   serverError,
   userError,
   pageError,
-  URL_REGEX,
+  URL_Regex,
 };
