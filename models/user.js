@@ -3,20 +3,20 @@ const { URL_REGEX } = require("../utils/consts");
 
 const userSchema = new mongoose.Schema({
   name: {
-    required: true,
     type: String,
-    minlength: 2,
-    maxlength: 30,
+    required: [true, 'The "name" field must be filled in.'],
+    minlength: [2, "The minimum length of name is 2"],
+    maxlength: [30, "The maximum length of name is 30"],
   },
   about: {
-    required: true,
     type: String,
-    minlength: 2,
-    maxlength: 30,
+    required: [true, 'The "About" field must be filled in.'],
+    minlength: [2, "The minimum length of About is 2"],
+    maxlength: [30, "The maximum length of About is 30"],
   },
   avatar: {
-    required: true,
     type: String,
+    required: [true, 'The "Avatar" field must be filled in.'],
     validate: {
       validator(value) {
         return URL_REGEX.test(value);

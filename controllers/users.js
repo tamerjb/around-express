@@ -1,25 +1,50 @@
+const user = require("../models/user");
 const User = require("../models/user");
 const { serverError, userError } = require("../utils/consts");
 
-// const path = require('path');
-// const getDataFromFile = require('../utils/files');
+const getUsers = (req, res) => {
+  User.find({})
+    .then((users) => res.status(200).send({ data: users }))
+    .catch(() => serverError(res));
+};
+const getUser = (req, res) => {
+  const { id } = req.params;
+  User.findById(id);
+  orFail(() => {
+    const error = new Error("User Not Found");
+    error.status = 404;
+    throw error;
+  })
+    .then((user) => {
+      res.status(200).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(400).send("Invalid User");
+      } else if (err.type === 404) {
+        res.status(404).send({ message: err.message });
+      } else {
+        serverError(res);
+      }
+    });
+};
+const createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then((user) => {
+      res.status(201).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(400).send({
+          message: `${Object.values(err.errors)
+            .map((error) => error.message)
+            .join(", ")}`,
+        });
+      } else {
+        serverError(res);
+      }
+    });
+};
 
-// const dataPath = path.join(__dirname, '..', 'data', 'users.json');
-
-// const getUsers = (req, res) => getDataFromFile(dataPath)
-//   .then((users) => res.status(200).send(users))
-//   .catch((err) => res.status(500).send(err));
-
-// const getProfile = (req, res) => getDataFromFile(dataPath)
-//   .then((users) => users.find((user) => user._id === req.params.id))
-//   .then((user) => {
-//     if (!user) {
-//       return res
-//         .status(404)
-//         .send({ message: `User ${req.params.id} not found ` });
-//     }
-//     return res.status(200).send(user);
-//   })
-//   .catch((err) => res.status(500).send(err));
-
-module.exports = { getProfile, getUsers };
+module.exports = { getUsers, getUser, createUser };
