@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { URL_REGEX } = require("../utils/consts");
+const { URL_Regex } = require("../utils/consts");
 
 const cardsSchema = new mongoose.Schema(
   {
@@ -14,18 +14,19 @@ const cardsSchema = new mongoose.Schema(
       required: [true, 'The "Link" field must be filled in.'],
       validate: {
         validator(value) {
-          return URL_REGEX.test(value);
+          return URL_Regex.test(value);
         },
         message: "Invalid URL",
       },
     },
     owner: {
-      required: true,
+      required: [true, 'The "Owner" field must be filled in.'],
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
     },
     likes: {
-      type: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
       default: [],
     },
     createdAt: {
