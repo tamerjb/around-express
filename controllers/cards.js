@@ -5,13 +5,15 @@ const { serverError } = require("../utils/consts");
 
 const getCards = (req, res) => {
   Card.find({})
+    .populate("owner")
     .then((cards) => res.status(200).send({ data: cards }))
     .catch(() => serverError(res));
 };
 // POST
 const createCard = (req, res) => {
-  const { name, link, likes, owner } = req.body;
+  const { name, link, likes } = req.body;
   const { _id } = req.user._id;
+  console.log(req.user._id);
 
   Card.create({ name, link, likes, owner: _id })
     .then((card) => res.status(201).send({ data: card }))

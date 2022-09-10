@@ -12,7 +12,12 @@ const userRouter = require("./routes/users");
 const cardRouter = require("./routes/cards");
 const { pageError } = require("./utils/consts");
 //////////////////////////////////////////////////////////////////////
-
+app.use((req, res, next) => {
+  req.user = {
+    _id: "631b713165d31b22ea3d52f1",
+  };
+  next();
+});
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(userRouter);
@@ -22,12 +27,6 @@ app.use((req, res) => {
 });
 //////////////////////////////////////////////////////////////////////
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "631b713165d31b22ea3d52f1",
-  };
-  next();
-});
 //////////////////////////////////////////////////////////////////////
 
 app.listen(PORT, () => {

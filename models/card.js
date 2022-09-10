@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { URL_Regex } = require("../utils/consts");
 
-const cardsSchema = new mongoose.Schema(
+const cardSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -20,9 +20,9 @@ const cardsSchema = new mongoose.Schema(
       },
     },
     owner: {
-      required: [true, 'The "Owner" field must be filled in.'],
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
+      required: [true, 'The "Owner" field must be filled in.'],
     },
     likes: {
       type: mongoose.Schema.Types.ObjectId,
@@ -37,4 +37,4 @@ const cardsSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-module.exports = mongoose.model("card", cardsSchema);
+module.exports = mongoose.model("card", cardSchema);
