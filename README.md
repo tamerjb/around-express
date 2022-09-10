@@ -1,4 +1,4 @@
-# Project 13: Around The U.S. - back end
+# Project 13: Around The U.S. - backend
 
 ### Overview
 
@@ -20,5 +20,3 @@ An introduction to working with Node.js & Express, this project focussed on back
 * The npm run dev command launches the server on localhost:3000 with hot reload enabled.
 
 ## Plan on improving the project
-
-This project will be linked to the front-end in the following sprint.
