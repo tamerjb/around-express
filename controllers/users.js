@@ -1,16 +1,16 @@
-const User = require("../models/user");
-const { serverError, userError } = require("../utils/consts");
+const User = require('../models/user');
+const { customError } = require('../utils/consts');
 
 const getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send({ data: users }))
-    .catch(() => serverError(res));
+    .catch(() => customError(res, 500, 'We have encountered an error'));
 };
 const getUser = (req, res) => {
   const { userId } = req.params;
   User.findById(userId)
     .orFail(() => {
-      const error = new Error("User Not Found");
+      const error = new Error('User Not Found');
       error.status = 404;
       throw error;
     })
@@ -18,12 +18,12 @@ const getUser = (req, res) => {
       res.status(200).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(400).send("Invalid User");
+      if (err.name === 'CastError') {
+        customError(res, 400, 'User ID not found');
       } else if (err.type === 404) {
-        res.status(404).send({ message: err.message });
+        customError(res, 404, 'We have encountered an error');
       } else {
-        serverError(res);
+        customError(res, 500, 'We have encountered an error');
       }
     });
 };
@@ -32,24 +32,24 @@ const createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(400).send({
           message: `${Object.values(err.errors)
             .map((error) => error.message)
-            .join(", ")}`,
+            .join(', ')}`,
         });
       } else {
-        serverError(res);
+        customError(res, 500, 'We have encountered an error');
       }
     });
 };
 
 const updateUserData = (req, res) => {
-  const id = req.user._id;
-  const body = req.body;
-  User.findByIdAndUpdate(id, { body }, { new: true })
+  const { id } = req.user._id;
+  const { body } = req;
+  User.findByIdAndUpdate(id, { body }, { runValidators: true })
     .orFail(() => {
-      const error = new Error("Invalid user id");
+      const error = new Error('Invalid user id');
 
       error.status = 404;
 
@@ -57,12 +57,12 @@ const updateUserData = (req, res) => {
     })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(400).send({ message: "User id is incorrect" });
+      if (err.name === 'CastError') {
+        customError(res, 400, 'User ID not found');
       } else if (err.status === 404) {
-        res.status(404).send({ message: "Invalid user id" });
+        customError(res, 404, 'Requested resource not found');
       } else {
-        res.status(500).send({ message: "Something went wrong" });
+        customError(res, 500, 'We have encountered an error');
       }
     });
 };
@@ -71,18 +71,18 @@ const updateUser = (req, res) => {
   const { name, about } = req.body;
 
   if (!name || !about) {
-    return res.status(400).send({ message: "Please update these fields" });
+    return customError(res, 400, 'Please update these fields name+about');
   }
-  updateUserData(res, req);
+  return updateUserData(res, req);
 };
 
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
 
   if (!avatar) {
-    return res.status(400).send({ message: "Please update avatar" });
+    return customError(res, 400, 'Please update avatar');
   }
-  updateUserData(res, req);
+  return updateUserData(res, req);
 };
 
 module.exports = {
