@@ -45,9 +45,9 @@ const createUser = (req, res) => {
 };
 
 const updateUserData = (req, res) => {
-  const { id } = req.user._id;
-  const { body } = req;
-  User.findByIdAndUpdate(id, { body }, { runValidators: true })
+  const id = req.user._id;
+  const { name, about, avatar } = req.body;
+  User.findByIdAndUpdate(id, { name, about, avatar }, { runValidators: true })
     .orFail(() => {
       const error = new Error('Invalid user id');
 
@@ -73,7 +73,7 @@ const updateUser = (req, res) => {
   if (!name || !about) {
     return customError(res, 400, 'Please update these fields name+about');
   }
-  return updateUserData(res, req);
+  return updateUserData(req, res);
 };
 
 const updateAvatar = (req, res) => {
@@ -82,7 +82,7 @@ const updateAvatar = (req, res) => {
   if (!avatar) {
     return customError(res, 400, 'Please update avatar');
   }
-  return updateUserData(res, req);
+  return updateUserData(req, res);
 };
 
 module.exports = {
